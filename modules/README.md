@@ -1,105 +1,60 @@
-An overview of the opencv_contrib modules
------------------------------------------
+## Repository for OpenCV's extra modules
 
-This list gives an overview of all modules available inside the contrib repository.
-To turn off building one of these module repositories, set the names in bold below to <reponame>
+This repository is intended for the development of so-called "extra" modules,
+contributed functionality. New modules quite often do not have stable API,
+and they are not well-tested. Thus, they shouldn't be released as a part of the
+official OpenCV distribution, since the library maintains binary compatibility,
+and tries to provide decent performance and stability.
+
+So, all the new modules should be developed separately, and published in the
+`opencv_contrib` repository at first. Later, when the module matures and gains
+popularity, it is moved to the central OpenCV repository, and the development team
+provides production-quality support for this module.
+
+### How to build OpenCV with extra modules
+
+You can build OpenCV, so it will include the modules from this repository. Contrib modules are under constant development and it is recommended to use them alongside the master branch or latest releases of OpenCV.
+
+Here is the CMake command for you:
 
 ```
-$ cmake -D OPENCV_EXTRA_MODULES_PATH=<opencv_contrib>/modules -D BUILD_opencv_<reponame>=OFF <opencv_source_directory>
+$ cd <opencv_build_directory>
+$ cmake -DOPENCV_EXTRA_MODULES_PATH=<opencv_contrib>/modules <opencv_source_directory>
+$ make -j5
 ```
 
-- **alphamat**: Computer Vision based Alpha Matting -- Given an input image and a trimap, generate an alpha matte.
+As the result, OpenCV will be built in the `<opencv_build_directory>` with all
+modules from `opencv_contrib` repository. If you don't want all of the modules,
+use CMake's `BUILD_opencv_*` options. Like in this example:
 
-- **aruco**: ArUco and ChArUco Markers -- Augmented reality ArUco marker and "ChARUco" markers where ArUco markers embedded inside the white areas of the checker board.
+```
+$ cmake -DOPENCV_EXTRA_MODULES_PATH=<opencv_contrib>/modules -DBUILD_opencv_legacy=OFF <opencv_source_directory>
+```
 
-- **barcode**: Barcode detecting and decoding methods.
+If you also want to build the samples from the "samples" folder of each module, also include the "-DBUILD_EXAMPLES=ON" option.
 
-- **bgsegm**: Background segmentation algorithm combining statistical background image estimation and per-pixel Bayesian segmentation.
+If you prefer using the GUI version of CMake (cmake-gui), then, you can add `opencv_contrib` modules within `opencv` core by doing the following:
 
-- **bioinspired**: Biological Vision -- Biologically inspired vision model: minimize noise and luminance variance, transient event segmentation, high dynamic range tone mapping methods.
+1. Start cmake-gui.
 
-- **ccalib**: Custom Calibration -- Patterns for 3D reconstruction, omnidirectional camera calibration, random pattern calibration and multi-camera calibration.
+2. Select the opencv source code folder and the folder where binaries will be built (the 2 upper forms of the interface).
 
-- **cnn_3dobj**: Deep Object Recognition and Pose -- Uses Caffe Deep Neural Net library to build, train and test a CNN model of visual object recognition and pose.
+3. Press the `configure` button. You will see all the opencv build parameters in the central interface.
 
-- **cvv**: Computer Vision Debugger -- Simple code that you can add to your program that pops up a GUI allowing you to interactively and visually debug computer vision programs.
+4. Browse the parameters and look for the form called `OPENCV_EXTRA_MODULES_PATH` (use the search form to focus rapidly on it).
 
-- **datasets**: Datasets Reader -- Code for reading existing computer vision databases and samples of using the readers to train, test and run using that dataset's data.
+5. Complete this `OPENCV_EXTRA_MODULES_PATH` by the proper pathname to the `<opencv_contrib>/modules` value using its browse button.
 
-- **dnn_objdetect**: Object Detection using CNNs -- Implements compact CNN Model for object detection. Trained using Caffe but uses opencv_dnn module.
+6. Press the `configure` button followed by the `generate` button (the first time, you will be asked which makefile style to use).
 
-- **dnn_superres**: Superresolution using CNNs -- Contains four trained convolutional neural networks to upscale images.
+7. Build the `opencv` core with the method you chose (make and make install if you chose Unix makefile at step 6).
 
-- **dnns_easily_fooled**: Subvert DNNs -- This code can use the activations in a network to fool the networks into recognizing something else.
+8. To run, linker flags to contrib modules will need to be added to use them in your code/IDE. For example to use the aruco module, "-lopencv_aruco" flag will be added.
 
-- **dpm**: Deformable Part Model -- Felzenszwalb's Cascade with deformable parts object recognition code.
+### Update the repository documentation
 
-- **face**: Face Recognition -- Face recognition techniques: Eigen, Fisher and Local Binary Pattern Histograms LBPH methods.
+In order to keep a clean overview containing all contributed modules, the following files need to be created/adapted:
 
-- **freetype**: Drawing text using freetype and harfbuzz.
+1. Update the README.md file under the modules folder. Here, you add your model with a single-line description.
 
-- **fuzzy**: Fuzzy Logic in Vision -- Fuzzy logic image transform and inverse; Fuzzy image processing.
-
-- **hdf**: Hierarchical Data Storage -- This module contains I/O routines for Hierarchical Data Format: https://en.m.wikipedia.org/wiki/Hierarchical_Data_Format meant to store large amounts of data.
-
-- **hfs**: Hierarchical Feature Selection for Efficient Image Segmentation -- This module contains an efficient algorithm to segment an image.
-
-- **img_hash**: This module contains algorithms to extract hash of an image allowing to efficiently estimate similarity between images.
-
-- **intensity_transform**: The module brings implementations of intensity transformation algorithms to adjust image contrast.
-
-- **julia**: Julia language wrappers with samples and tests.
-
-- **line_descriptor**: Line Segment Extract and Match -- Methods of extracting, describing and matching line segments using binary descriptors.
-
-- **matlab**: Matlab Interface -- OpenCV Matlab Mex wrapper code generator for certain opencv core modules.
-
-- **mcc**: Macbeth Color Chart detector -- Find and return color patch location in MacBeth color calibration charts.
-
-- **optflow**: Optical Flow -- Algorithms for running and evaluating deepflow, simpleflow, sparsetodenseflow and motion templates (silhouette flow).
-
-- **ovis**: OGRE 3D Visualiser -- allows you to render 3D data using the OGRE 3D engine.
-
-- **phase_unwrapping**: Quality-guided phase unwrapping.
-
-- **plot**: Plotting -- The plot module allows you to easily plot data in 1D or 2D.
-
-- **quality**: Image Quality Analysis (IQA) API.
-
-- **rapid**: Silhouette based 3D object tracking.
-
-- **reg**: Image Registration -- Pixels based image registration for precise alignment. Follows the paper "Image Alignment and Stitching: A Tutorial", by Richard Szeliski.
-
-- **rgbd**: RGB-Depth Processing module -- Linemod 3D object recognition; Fast surface normals and 3D plane finding. 3D visual odometry. 3d reconstruction using KinectFusion.
-
-- **saliency**: Saliency API -- Where humans would look in a scene. Has routines for static, motion and "objectness" saliency.
-
-- **sfm**: Structure from Motion -- This module contains algorithms to perform 3d reconstruction from 2d images. The core of the module is a light version of Libmv.
-
-- **shape**: Shape Distance and Matching
-
-- **stereo**: Stereo Correspondence -- Stereo matching done with different descriptors: Census / CS-Census / MCT / BRIEF / MV and dense stereo correspondence using Quasi Dense Stereo method.
-
-- **structured_light**: Structured Light Use -- How to generate and project gray code patterns and use them to find dense depth in a scene.
-
-- **superres**: Super Resolution
-
-- **surface_matching**: Point Pair Features -- Implements 3d object detection and localization using multimodal point pair features.
-
-- **text**: Scene Text Detection and Recognition -- This module contains algorithms to perform text detection, words segmentation and text recognition in a visual scene.
-
-- **tracking**: Vision Based Object Tracking -- Use and/or evaluate different visual object tracking techniques.
-
-- **videostab**: Video Stabilization
-
-- **viz**: 3D Visualizer
-
-- **wechat_qrcode**: WeChat QR code detector for detecting and parsing QR code.
-
-- **xfeatures2d**: Features2D extra -- Extra 2D Features Framework containing experimental and non-free 2D feature detector/descriptor algorithms. SURF, BRIEF, Censure, Freak, LUCID, Daisy, Self-similar.
-
-- **ximgproc**: Extended Image Processing -- Structured Forests / Domain Transform Filter / Guided Filter / Adaptive Manifold Filter / Joint Bilateral Filter / Superpixels / Ridge Detection Filter.
-
-- **xobjdetect**: Boosted 2D Object Detection -- Uses a Waldboost cascade and local binary patterns computed as integral features for 2D object detection.
-
-- **xphoto**: Extra Computational Photography -- Additional photo processing algorithms: Color balance / Denoising / Inpainting.
+2. Add a README.md inside your own module folder. This README explains which functionality (separate functions) is available, links to the corresponding samples, and explains in somewhat more detail what the module is expected to do. If any extra requirements are needed to build the module without problems, add them here also.
